@@ -5,7 +5,7 @@ parameter inst_size = `instr_block_size,
 parameter data_size = `data_block_size
 )(
 input clk,
-input [`word_width - 3 : 0] A1, A2,
+input [`address_width - 3 : 0] A1, A2,
 input [`byte_width - 1 : 0] W1, W2,
 input WE1, WE2,
 output reg [`byte_width - 1 : 0] R1, R2);
@@ -39,7 +39,7 @@ parameter inst_size = `instr_block_size,
 parameter data_size = `data_block_size
 )(
 input clk,
-input [`word_width - 3 : 0] A1, A2,
+input [`address_width - 3 : 0] A1, A2,
 input [`byte_width - 1 : 0] W1, W2,
 input WE1, WE2,
 output reg [`byte_width - 1 : 0] R1, R2);
@@ -70,7 +70,7 @@ parameter inst_size = `instr_block_size,
 parameter data_size = `data_block_size
 )(
 input clk,
-input [`word_width - 3 : 0] A1, A2,
+input [`address_width - 3 : 0] A1, A2,
 input [`byte_width - 1 : 0] W1, W2,
 input WE1, WE2,
 output reg [`byte_width - 1 : 0] R1, R2);
@@ -101,7 +101,7 @@ parameter inst_size = `instr_block_size,
 parameter data_size = `data_block_size
 )(
 input clk,
-input [`word_width - 3 : 0] A1, A2,
+input [`address_width - 3 : 0] A1, A2,
 input [`byte_width - 1 : 0] W1, W2,
 input WE1, WE2,
 output reg [`byte_width - 1 : 0] R1, R2);
@@ -132,15 +132,16 @@ parameter inst_size = `instr_block_size,
 parameter data_size = `data_block_size
 )(
 input clk,
-input [`word_width - 1 : 0] A1, A2,
+input [`address_width - 1 : 2] A1, A2,	//[`address_width - 1 : 0]
 input [`word_width - 1 : 0] W1, W2,
 input [`WE_width - 1: 0] WE1, WE2,
 output [`word_width - 1 : 0] R1, R2);
 
+
 ram_1 #(.inst_size(inst_size), .data_size(data_size)) ram_1 (
 .clk (clk),
-.A1 (A1[`word_width - 1 : 2]),
-.A2 (A2[`word_width - 1 : 2]),
+.A1 (A1[`address_width - 1 : 2]),
+.A2 (A2[`address_width - 1 : 2]),
 .W1 (W1[`byte_width - 1 : 0]),
 .W2 (W2[`byte_width - 1 : 0]),
 .WE1 (WE1[0]),
@@ -150,8 +151,8 @@ ram_1 #(.inst_size(inst_size), .data_size(data_size)) ram_1 (
 
 ram_2 #(.inst_size(inst_size), .data_size(data_size)) ram_2 (
 .clk (clk),
-.A1 (A1[`word_width - 1 : 2]),
-.A2 (A2[`word_width - 1 : 2]),
+.A1 (A1[`address_width - 1 : 2]),
+.A2 (A2[`address_width - 1 : 2]),
 .W1 (W1[`half_width - 1 : `byte_width]),
 .W2 (W2[`half_width - 1 : `byte_width]),
 .WE1 (WE1[1]),
@@ -161,8 +162,8 @@ ram_2 #(.inst_size(inst_size), .data_size(data_size)) ram_2 (
 
 ram_3 #(.inst_size(inst_size), .data_size(data_size)) ram_3 (
 .clk (clk),
-.A1 (A1[`word_width - 1 : 2]),
-.A2 (A2[`word_width - 1 : 2]),
+.A1 (A1[`address_width - 1 : 2]),
+.A2 (A2[`address_width - 1 : 2]),
 .W1 (W1[`half_width + `byte_width - 1 : `half_width]),
 .W2 (W2[`half_width + `byte_width - 1 : `half_width]),
 .WE1 (WE1[2]),
@@ -172,8 +173,8 @@ ram_3 #(.inst_size(inst_size), .data_size(data_size)) ram_3 (
 
 ram_4 #(.inst_size(inst_size), .data_size(data_size)) ram_4 (
 .clk (clk),
-.A1 (A1[`word_width - 1 : 2]),
-.A2 (A2[`word_width - 1 : 2]),
+.A1 (A1[`address_width - 1 : 2]),
+.A2 (A2[`address_width - 1 : 2]),
 .W1 (W1[`word_width - 1 : `half_width + `byte_width]),
 .W2 (W2[`word_width - 1 : `half_width + `byte_width]),
 .WE1 (WE1[3]),

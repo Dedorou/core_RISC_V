@@ -1,16 +1,19 @@
 `include "parameters.vh"
 
 module decoder(
-input wire [`word_width - 1 : 0] instruction,
+//input [word_width - 1 : 0] instruction,
+input [`opcode_width - 1 : 0] opcode,
+input [`funct3_width - 1 : 0] funct3,
+input [`funct7_width - 1: 0] funct7,
 
 output reg [`imm_control_width - 1 : 0] imm_control,	
 output reg [`ALU_control_width - 1 : 0] ALU_control,	
 output reg [`store_control_width - 1 : 0] store_control
 );
 
-wire [`opcode_width - 1	: 0] opcode = instruction [`opcode_width - 1 : 0];
-wire [`funct3_width - 1 : 0] funct3 = instruction [`opcode_width + `rd_width + `funct3_width - 1 : `opcode_width + `rd_width];
-wire [`funct7_width - 1: 0] funct7 = instruction [`word_width - 1 : `word_width - `funct7_width];
+//wire [`opcode_width - 1	: 0] opcode = instruction [`opcode_width - 1 : 0];
+//wire [`funct3_width - 1 : 0] funct3 = instruction [`opcode_width + `rd_width + `funct3_width - 1 : `opcode_width + `rd_width];
+//wire [`funct7_width - 1: 0] funct7 = instruction [`word_width - 1 : `word_width - `funct7_width];
 
 always @* begin
 
@@ -109,10 +112,10 @@ case (opcode)
 	`jalr_opcode : // I-type instruction
 	begin 
 		//можно ли убрать if ???
-		if (funct3 == `jalr_funct3) begin
+		//if (funct3 == `jalr_funct3) begin
 			imm_control <= `i_type_imm;
 			ALU_control <= `add_ALU;
-		end
+		//end
 		store_control <= `sw;//???
 	end
 	

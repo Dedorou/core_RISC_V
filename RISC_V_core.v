@@ -6,8 +6,8 @@ input rst,
 
 output [`word_width - 1 : 0] ALU_out);
 
-wire [`word_width - 1 : 0] mem_A1;
-wire [`word_width - 1 : 0] mem_A2;
+wire [`address_width - 1 : 2] mem_A1;	//[`address_width - 1 : 0]
+wire [`address_width - 1 : 2] mem_A2;	//[`address_width - 1 : 0]
 wire [`word_width - 1 : 0] mem_R1;
 wire [`word_width - 1 : 0] mem_R2;
 wire [`WE_width - 1 : 0] mem_WE1;

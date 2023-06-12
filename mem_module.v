@@ -6,8 +6,8 @@ input clk,
 input rst,
 
 //адресные мультиплексоры
-input [`word_width - 1 : 0] CU_A1_out,
-input [`word_width - 1 : 0] CU_A2_out,
+input [`address_width - 1 : 2] CU_A1_out,	//[`address_width - 1 : 0]
+input [`address_width - 1 : 2] CU_A2_out,	//[`address_width - 1 : 0]
 input [`word_width - 1 : 0] ALU_out,
 input [`mem_A1_mux_control - 1 : 0] A1_mux_control,
 input A2_mux_control,
@@ -32,8 +32,8 @@ output [`word_width - 1 : 0] old_pc_out
 
 );
 
-wire [`word_width - 1 : 0] A1_mux_out;
-wire [`word_width - 1 : 0] A2_mux_out;
+wire [`address_width - 1 : 2] A1_mux_out;	//[`address_width - 1 : 0]
+wire [`address_width - 1 : 2] A2_mux_out;	//[`address_width - 1 : 0]
 wire [`word_width - 1 : 0] W1_mux_out;
 wire [`word_width - 1 : 0] W2_mux_out;
 
@@ -62,16 +62,16 @@ reg_32 old_pc_reg (
 	.D (pc_out),
 	.Q (old_pc_out));
 
-mux_3 A1_mux (
+mux_3_addr A1_mux (
 	.a (CU_A1_out),
-	.b (pc_out),
-	.c (ALU_out),
+	.b (pc_out[`address_width - 1 : 2]),	//[`address_width - 1 : 0]
+	.c (ALU_out[`address_width - 1 : 2]),	//[`address_width - 1 : 0]
 	.sel (A1_mux_control),
 	.out (A1_mux_out));
 
-mux_2 A2_mux (
+mux_2_addr A2_mux (
 	.a (CU_A2_out),
-	.b (ALU_out),
+	.b (ALU_out[`address_width - 1 : 2]),	//[`address_width - 1 : 0]
 	.sel (A2_mux_control),
 	.out (A2_mux_out));
 

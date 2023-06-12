@@ -17,7 +17,22 @@ end
 
 endmodule
 
+module mux_2_addr (
+input [`address_width - 1 : 2] a, b,	//[`address_width - 1 : 0]
+input sel,
 
+output reg [`address_width - 1 : 2] out	//[`address_width - 1 : 0]
+); 
+
+always @(a or b or sel) begin 
+	case (sel)
+		1'b0 : out <= a;
+		1'b1 : out <= b;
+		default : out <= a;
+	endcase 
+end
+
+endmodule
 
 module mux_3 (
 input [`word_width - 1 : 0] a, b, c,
@@ -37,7 +52,23 @@ end
 
 endmodule
 
+module mux_3_addr (
+input [`address_width - 1 : 2] a, b, c,	//[`address_width - 1 : 0]
+input [1 : 0] sel,
 
+output reg [`address_width - 1 : 2] out	//[`address_width - 1 : 0]
+); 
+
+always @(a or b or c or sel) begin 
+	case (sel)
+		2'b00 : out <= a;
+		2'b01 : out <= b;
+		2'b10 : out <= c;
+		default : out <= a;
+	endcase 
+end
+
+endmodule
 
 module mux_4 (
 input [`word_width - 1 : 0] a, b, c, d,

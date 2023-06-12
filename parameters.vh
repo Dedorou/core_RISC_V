@@ -1,8 +1,10 @@
 `define	instr_block_size	50
 `define data_block_size		50
-
 `define register_quantity		32
 
+`define memory_size		`instr_block_size + `data_block_size + `register_quantity
+`define address_width	$clog2(`memory_size) 
+	
 `define word_width		32
 `define half_width		16
 `define byte_width		8
@@ -22,6 +24,10 @@
 `define rs1_dec_width	7
 `define rs2_dec_width	7
 `define rd_dec_width	7
+
+`define CU_addr_zeros	{`address_width - `rs1_dec_width}
+`define CU_zeros 		`CU_addr_zeros
+`define addr_zeros 		`address_width'h0
 
 //instructions opcodes
 `define arithmetic_opcode     	7'b0110011
@@ -56,6 +62,8 @@
 `define jalr_2 			5'b10000
 `define lui 			5'b10001
 `define auipc 			5'b10010
+
+`define imm_arithm_store 	5'b10011
                            
 //mem A1 mux
 `define mem_A1_mux_control		2

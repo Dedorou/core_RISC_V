@@ -18,8 +18,8 @@ output [`imm_control_width - 1 : 0] imm_control,
 output [`word_width - 1 : `opcode_width] imm,
 
 //memory
-output [`word_width - 1 : 0] mem_A1,
-output [`word_width - 1 : 0] mem_A2,
+output [`address_width - 1 : 2] mem_A1,	//[`address_width - 1 : 0]
+output [`address_width - 1 : 2] mem_A2,	//[`address_width - 1 : 0]
 output [`WE_width - 1 : 0] mem_WE1,
 output [`WE_width - 1 : 0] mem_WE2,
 output [`mem_A1_mux_control - 1 : 0] mem_A1_mux,
@@ -37,40 +37,66 @@ wire [`imm_control_width - 1 : 0] imm_control_dec;
 wire [`store_control_width - 1 : 0] store_control_dec;
 
 wire instr_reg_WE;
-wire [`word_width - 1 : 0] instruction_reg;
+wire [`word_width - 1 : `opcode_width] instruction_reg;
 wire [`ALU_control_width - 1 : 0] ALU_control_reg;
 wire [`imm_control_width - 1 : 0] imm_control_reg;
 wire [`store_control_width - 1 : 0] store_control_reg;
 
-wire [`rs1_dec_width - 1 : 0] rs1;
-wire [`rs2_dec_width - 1 : 0] rs2;
-wire [`rd_dec_width - 1 : 0] rd;
+
 wire [`opcode_width - 1 : 0] opcode;
+wire [`funct3_width - 1 : 0] funct3;
+wire [`funct7_width - 1: 0] funct7; 
 
+wire [`rs1_width - 1 : 0] rs1;
+wire [`rs2_width - 1 : 0] rs2;
+wire [`rd_width - 1 : 0] rd;
 
-assign opcode = instruction_reg [`opcode_width - 1 : 0];
+wire [`rs1_dec_width - 1 : 2] rs1_dec;	//[`address_width - 1 : 0]
+wire [`rs2_dec_width - 1 : 2] rs2_dec;	//[`address_width - 1 : 0]
+wire [`rd_dec_width - 1 : 2] rd_dec;	//[`address_width - 1 : 0]
+
+//wire [`rs1_dec_width - 1 : 0] rs1;
+//wire [`rs2_dec_width - 1 : 0] rs2;
+//wire [`rd_dec_width - 1 : 0] rd;
+
+assign opcode = instruction [`opcode_width - 1 : 0];
+assign funct3 = instruction [`opcode_width + `rd_width + `funct3_width - 1 : `opcode_width + `rd_width];
+assign funct7 = instruction [`word_width - 1 : `word_width - `funct7_width];
 assign imm = instruction_reg [`word_width - 1 : `opcode_width];
+//assign imm = instruction_reg;
+
+assign rs1 = instruction_reg [`rs1_width + `funct3_width + `rd_width + `opcode_width - 1 : `funct3_width + `rd_width + `opcode_width];
+assign rs2 = instruction_reg [`rs2_width + `rs1_width + `funct3_width + `rd_width + `opcode_width - 1 : `rs1_width + `funct3_width + `rd_width + `opcode_width];
+assign rd = instruction_reg [`rd_width + `opcode_width - 1 : `opcode_width];
 
 decoder decoder (
-	.instruction (instruction),
+	.opcode (opcode),
+	.funct3 (funct3),
+	.funct7 (funct7),
 	.imm_control (imm_control_dec),
 	.ALU_control (ALU_control_dec),
 	.store_control (store_control_dec));
 
 reg_address_decoder reg_address_decoder (
-	.instruction (instruction_reg),
 	.rs1 (rs1),
 	.rs2 (rs2),
-	.rd (rd));
+	.rd (rd),
+	.rs1_dec (rs1_dec),
+	.rs2_dec (rs2_dec),
+	.rd_dec (rd_dec));
+//	.instruction (instruction_reg),
+//	.rs1 (rs1),
+//	.rs2 (rs2),
+//	.rd (rd));
 
-reg_32 inst_reg (
+param_reg #(.N (`word_width - `opcode_width)) inst_reg (
 	.clk (clk),
 	.rst (rst),
 	.WE (instr_reg_WE),
-	.D (instruction),
+	.D (instruction [`word_width - 1 : `opcode_width]),
 	.Q (instruction_reg));
 	
-param_reg  #(.N (`imm_control_width + `ALU_control_width + `store_control_width)) control_reg (
+param_reg #(.N (`imm_control_width + `ALU_control_width + `store_control_width)) control_reg (
 	.clk (clk),
 	.rst (rst),
 	.WE (instr_reg_WE),
@@ -82,9 +108,9 @@ control_unit control_unit (
 	.rst (rst),
 	
 	.opcode (opcode),
-	.rs1 (rs1),
-	.rs2 (rs2),
-	.rd (rd),
+	.rs1 (rs1_dec),
+	.rs2 (rs2_dec),
+	.rd (rd_dec),
 	
 	.branch (branch),
 	
